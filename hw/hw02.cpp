@@ -5,7 +5,7 @@
 using namespace std;
 
 class Warrior;
-void read_line(const string& line);
+void read_line(const string& line, vector<Warrior>& warriors);
 void evaluate(const vector<string>& split, vector<Warrior>& warriors);
 
 int main() {
@@ -15,32 +15,20 @@ int main() {
         exit(1);
     }
     string line;
+    vector<Warrior> warriors;
     while(getline(warriors_file, line)) {
-        read_line(line);
+        read_line(line, warriors);
     }
 }
 
-class Warrior {
-    private: 
-        string name;
-        int strength;
-    public:
-        Warrior(const string& name, int strength) : name(name), strength(strength) {}
-        void setStrength(int strength) {
-            this->strength = strength;
-        }
-        const string& getName() {
-            return this->name;
-        }
-        const int getStrength() {
-            return this->strength;
-        }
+struct Warrior {
+    string name;
+    int strength;
 };
 
-void read_line(const string& line) {
+void read_line(const string& line, vector<Warrior>& warriors) {
     string token = "";
     vector<string> split;
-    vector<Warrior> warriors;
     for(size_t i = 0; i < line.size(); ++i) {
         if(line[i] == ' ') {
             split.push_back(token);
@@ -54,10 +42,6 @@ void read_line(const string& line) {
         }
     }
     evaluate(split, warriors);
-    // for(const string& token : split) {
-    //     cout << token <<  ' ';
-    // }
-    // cout << endl;
 }
 
 void evaluate(const vector<string>& split, vector<Warrior>& warriors) {
@@ -65,25 +49,61 @@ void evaluate(const vector<string>& split, vector<Warrior>& warriors) {
     if(function == "Warrior") {
         string name = split[1];
         int strength = stoi(split[2]);
-        warriors.push_back(Warrior(name, strength));
+        Warrior w;
+        w.name = name;
+        w.strength = strength;
+        warriors.push_back(w);
     } else if (function == "Battle") {
         string name1 = split[1];
         string name2 = split[2];
-        Warrior* w1;
-        Warrior* w2;
-        for(Warrior& warrior : warriors)
-            if(warrior.getName() == name1) {
-                w1 = &warrior;
-            } else if(warrior.getName() == name2) {
-                w2 = &warrior;
+        Warrior w1;
+        Warrior w2;
+        int w1i;
+        int w2i;
+        for(size_t i = 0; i < warriors.size(); ++i) {
+            if(warriors[i].name == name1) {
+                w1 = warriors[i];
+                w1i = i;
+            } else if(warriors[i].name == name2) {
+                w2 = warriors[i];
+                w2i = i;
             }
-        } 
-        if(w1 == NULL && w2 == NULL) {
-            int s1 = w1->getStrength();
-            int s2 = w2->getStrength();
-            if (s1 > s2) {
-                
+            if (w1.name == name1 && w2.name == name2) {
+                cout << w1.name << " battles " << w2.name << endl;
+                if(w1.strength == 0 && w2.strength == 0) {
+                    cout << "Oh, NO! They're both dead! Yuck!" << endl; 
+                } else if (w2.strength == 0) {
+                    cout << "He's dead, " << w1.name << endl;
+                } else if (w1.strength == 0) {
+                    cout << "He's dead, " << w2.name << endl;
+                } else {
+                    int s1 = w1.strength;
+                    int s2 = w2.strength;
+                    if (s1 > s2) {
+                        cout << w1.name << " defeats " << w2.name << endl;
+                        int rem = s1 - s2;
+                        w1.strength = rem;
+                        w2.strength = 0;
+                    } else if (s2 > s1) {
+                        cout << w2.name << " defeats " << w1.name << endl;
+                        int rem = s2 - s1;
+                        w2.strength = rem;
+                        w1.strength = 0;
+                    } else {
+                        cout << "Mutual Annihilation: " << w1.name << " and " << w2.name << " die at each other's hands" << endl;
+                        w1.strength = 0;
+                        w2.strength = 0;
+                    }
+                }
+                warriors[w1i] = w1;
+                warriors[w2i] = w2;
+                break;
             }
         }
-        
+    } else if (function == "Status") {
+        cout << "There are: " << warriors.size() << " warriors" << endl;
+        for (Warrior& warrior : warriors) {
+            cout << "Warrior: " << warrior.name << ", strength: " << warrior.strength << endl;
+        }
+    }        
 }
