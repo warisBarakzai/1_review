@@ -62,10 +62,11 @@ int main_basics() {
 
 #include <fstream>
 // file i/o
-int main_3() {
+int main_fileio1() {
     // open a file
     ifstream ifs("data.txt");
     int x;
+    cout << "line: " << line;
     // check if file opened
     if (!ifs) {
         cerr << "Could not open the file.\n";
@@ -79,7 +80,7 @@ int main_3() {
 }
 
 // file i/o 2
-int main_4() {
+int main_fileio2() {
     ifstream ifs("data.txt");
     string line;
     while (getline(ifs, line)) {
@@ -89,7 +90,7 @@ int main_4() {
     return 0;
 }
 
-int main_5() {
+int main_fileio3() {
     ifstream ifs("data.txt");
     ifs.clear();
     // attempting to read something and couldn't causes some flags to be set. These flags prevent from reading anything else from the file
@@ -101,7 +102,7 @@ int main_5() {
 
 #include <vector>
 // vectors
-int main_6() {
+int main_vectors() {
     vector<int> vecOfInts;
     // cout << vecOfInts[16];
     vecOfInts.push_back(5);
@@ -122,7 +123,7 @@ int main_6() {
     return 0;
 }
 
-int main_7(const vector<int>& aVec) {
+int main_vectors2(const vector<int>& aVec) {
     // const = constant
     // vector<int>& means pass by reference
     // otherwise, would be a copy
@@ -143,7 +144,7 @@ int main_7(const vector<int>& aVec) {
     return 0;
 }
 
-int main_8() {
+int main_strings() {
     // Strings
     // Like vectors
     // can be used as if a vector of characters
@@ -173,7 +174,7 @@ struct Cat {
     double weight = 0;
 };
 
-int main() {
+int main_structs() {
     Cat myCat;
     myCat.name = "Felix";
     myCat.color = "grey";
@@ -186,5 +187,60 @@ int main() {
     // have to test if fields have the same value, unless implement the == operator for Cats
     // printing an object requires operator overloading
     // vector of structs
-
 }
+
+// Functions -- break up functions
+// Prototypes -- prev. define function before main. When the compiler compiles and sees main it knows there really is a function. 
+// Prototype = provide definition of function before the function is called -- compiler happy with just a promise
+// ex below
+
+int factorial(int n);
+
+int main_prototyping() {
+    int val;
+    cout << "Val?: ";
+    cin >> val;
+    int answer = factorial(val);
+    cout << "Val: " << answer << endl;
+    return 0;
+}
+
+int factorial(int n) {
+    int result = 1;
+    for (int i = 2; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+// void return type -- function that doesn't return a type
+
+// Parameter Passing
+// pass-by-value
+
+int addOne(int n) {
+    // n is copied, not the original. Therefore if n = n + 1, original n not affected. 
+    int result = n + 1;
+    return result;
+}
+
+int addOne2(int& n) {
+    // pass by reference 
+    // Note - can not pass a literal (addOne2(17)) won't work -- not a problem if you pass by constant reference however 
+    n = n + 1;
+    return n;
+}
+
+int addOne3(const int& n) {
+    // pass by constant reference
+    int result = n + 1;
+    return result;
+}
+
+// Passing Streams -- streams must always be passed by reference. Nothing else, NEVER copy a stream. Also can't pass by constant reference
+
+// Globals - dont.
+
+// Scope -- define your variables using the smallest scope possible. Ideally, only be used where it makes sense.
+
+
